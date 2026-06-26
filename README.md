@@ -1,56 +1,110 @@
 # Undo/Redo Workflow System
 
-This project implements a robust undo/redo system for a workflow application using the Command, Memento, and Composite design patterns.
+A high-performance, full-stack workflow management system featuring a robust **Undo/Redo** engine. Built with Node.js, TypeScript, and Flutter, this project demonstrates advanced architectural patterns used in professional-grade editors and productivity tools.
 
-## Project Structure
+---
 
-- `backend/`: Node.js + TypeScript service.
-  - Implements Command, Memento, Composite patterns.
-  - Durable command log (Event Sourcing) in `data/command_log.jsonl`.
-  - REST API for actions and state management.
-  - Dockerized and ready for orchestration.
-- `frontend/`: Flutter web application.
-  - Simple UI to interact with the backend.
-  - Supports document updates, task management, and undo/redo.
-- `docker-compose.yml`: Orchestrates the backend service.
+## 🚀 Key Features
 
-## Getting Started
+- **Infinite Undo/Redo**: Navigate through every state change in your session.
+- **Event Sourcing**: Durable command logs ensure history survives application restarts.
+- **Atomic Bulk Actions**: Group multiple changes into a single undoable step.
+- **Micro-State Persistence**: Partial state snapshots (Memento) allow perfect recovery of deleted data.
+- **Dockerized Architecture**: Seamless deployment of backend services.
+
+---
+
+## 🏗️ Architectural Patterns
+
+### 1. Command Pattern
+The core of the system. Every user interaction (e.g., editing a document, adding a task) is treated as a **Command Object**.
+- **Execution**: The command modifies the current state.
+- **Reversal**: Every command encapsulates the logic required to undo itself.
+```mermaid
+graph LR
+    A[User Action] --> B[Command Object]
+    B --> C{Execute}
+    C --> D[Modify State]
+    B --> E{Undo}
+    E --> F[Restore State]
+```
+
+### 2. Memento Pattern (State Capture)
+Used primarily in destructive actions like `DeleteTaskCommand`.
+- **The Challenge**: When a task is deleted, its data is removed from memory.
+- **The Solution**: Before deletion, the command captures a "Memento" (snapshot) of the task. If the user clicks "Undo", the command uses this Memento to re-insert the task exactly where it was.
+
+### 3. Composite Pattern (Bulk Actions)
+Allows complex, multi-step operations to be treated as a single unit.
+- **Bulk Delete**: When you delete multiple tasks at once, a `CompositeCommand` groups individual `DeleteTaskCommand` objects.
+- **Single Click Undo**: One "Undo" triggers the reverse execution of all child commands in the composite.
+
+### 4. Event Sourcing
+Instead of just saving the "current state", the system persists the **stream of commands**.
+- **Log File**: Every command is serialized to `data/command_log.jsonl`.
+- **System Replay**: On startup, the backend reads the log and replays the commands one by one to reconstruct the exactly state the user left off with.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend**: Node.js, TypeScript, Express, Jest.
+- **Frontend**: Flutter Web.
+- **DevOps**: Docker, Docker Compose.
+- **Data Format**: JSONL (JSON Lines) for event logs.
+
+---
+
+## 🏁 Getting Started
 
 ### Prerequisites
+- [Docker & Docker Compose](https://www.docker.com/get-started)
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (for frontend development)
 
-- Docker and Docker Compose
-- Node.js & npm (for local development)
-- Flutter (for frontend development)
+### Deployment
 
-### Running the Backend
-
-1. Navigate to the root directory.
-2. Run:
+1. **Spin up the Backend**:
    ```bash
    docker-compose up --build
    ```
-3. The API will be available at `http://localhost:3000`.
+   *The API will be available at `http://localhost:3000`.*
 
-### Running the Frontend
-
-1. Navigate to the `frontend/` directory.
-2. Run:
+2. **Launch the Frontend**:
    ```bash
+   cd frontend
    flutter run -d chrome
    ```
-   (Note: Ensure the backend is running)
 
-### Running Tests
+### Local Development (Backend)
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-1. Navigate to the `backend/` directory.
-2. Run:
-   ```bash
-   npm test
-   ```
+---
 
-## Design Patterns Implemented
+## 🧪 Testing
 
-- **Command Pattern**: Encapsulates every state change as an object with `execute()` and `undo()` methods.
-- **Memento Pattern**: Used in `DeleteTaskCommand` to capture the state of a task before deletion, allowing it to be perfectly restored.
-- **Composite Pattern**: `BulkDeleteTasksCommand` groups multiple deletion commands into a single atomic action.
-- **Event Sourcing**: The system persists the sequence of commands and replays them on startup to reconstruct the application state.
+The project includes comprehensive contract tests to ensure that every `execute()` and `undo()` sequence maintains state integrity.
+```bash
+cd backend
+npm test
+```
+
+---
+
+## 📜 API Overview
+
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/api/state` | GET | Retrieve current document and task state. |
+| `/api/commands/execute` | POST | Send a new action to be executed and logged. |
+| `/api/commands/undo` | POST | Reverse the last successful command. |
+| `/api/commands/redo` | POST | Re-apply a previously undone command. |
+| `/api/history` | GET | View the full stack of recent actions. |
+
+---
+
+## 👥 Authors
+- **Jaswanth** - [jaswanth4237](https://github.com/jaswanth4237)

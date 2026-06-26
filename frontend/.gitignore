@@ -1,0 +1,55 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configurations and tasks used by Visual Studio Code.
+# Relevant if you use the Flutter extension.
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+__pycache__/
+build/
+
+# Android related
+**/android/app/src/main/res/generated/
+**/android/gen/
+**/android/out/
+**/android/sdk.dir
+**/android/local.properties
+**/android/debug.keystore
+**/android/debug.keystore.lock
+**/android/debug.keystore.password
+**/android/debug.keystore.type
+
+# iOS related
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Pods/
+**/ios/Runner.xcworkspace/xcuserdata/
+
+# Web related
+lib/generated_plugin_registrant.dart
